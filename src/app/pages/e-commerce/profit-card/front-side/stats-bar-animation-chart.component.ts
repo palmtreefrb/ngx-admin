@@ -1,7 +1,14 @@
+/*
+ * Copyright (c) Akveo 2019. All Rights Reserved.
+ * Licensed under the Single Application / Multi Application License.
+ * See LICENSE_SINGLE_APP / LICENSE_MULTI_APP in the 'docs' folder for license information on type of purchased license.
+ */
+
 import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
 import { takeWhile } from 'rxjs/operators';
 import { LayoutService } from '../../../../@core/utils/layout.service';
+import { ChartData } from '../../../../@core/interfaces/common/chart';
 
 @Component({
   selector: 'ngx-stats-bar-animation-chart',
@@ -17,17 +24,14 @@ export class StatsBarAnimationChartComponent implements AfterViewInit, OnDestroy
 
   private alive = true;
 
-  @Input() linesData: { firstLine: number[]; secondLine: number[] } = {
-    firstLine: [],
-    secondLine: [],
-  };
+  @Input() lines: ChartData;
 
   echartsIntance: any;
   options: any = {};
 
   constructor(private theme: NbThemeService,
               private layoutService: LayoutService) {
-    this.layoutService.onSafeChangeLayoutSize()
+    this.layoutService.onChangeLayoutSize()
       .pipe(
         takeWhile(() => this.alive),
       )
@@ -57,7 +61,7 @@ export class StatsBarAnimationChartComponent implements AfterViewInit, OnDestroy
         bottom: 0,
       },
       legend: {
-        data: ['transactions', 'orders'],
+        data: this.lines.legend,
         borderWidth: 0,
         borderRadius: 0,
         itemWidth: 15,
@@ -84,7 +88,7 @@ export class StatsBarAnimationChartComponent implements AfterViewInit, OnDestroy
       },
       xAxis: [
         {
-          data: this.linesData.firstLine.map((_, index) => index),
+          data: this.lines.linesData[0].map((_, index) => index),
           silent: false,
           axisLine: {
             show: false,
@@ -122,13 +126,13 @@ export class StatsBarAnimationChartComponent implements AfterViewInit, OnDestroy
         {
           name: 'transactions',
           type: 'bar',
-          data: this.linesData.firstLine,
+          data: this.lines.linesData[0],
           animationDelay: idx => idx * 10,
         },
         {
           name: 'orders',
           type: 'bar',
-          data: this.linesData.secondLine,
+          data: this.lines.linesData[1],
           animationDelay: idx => idx * 10 + 100,
         },
       ],

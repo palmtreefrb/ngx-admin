@@ -1,13 +1,13 @@
-import {Component, OnDestroy} from '@angular/core';
-import { NbThemeService } from '@nebular/theme';
-import { takeWhile } from 'rxjs/operators' ;
-import { SolarData } from '../../@core/data/solar';
+/*
+ * Copyright (c) Akveo 2019. All Rights Reserved.
+ * Licensed under the Single Application / Multi Application License.
+ * See LICENSE_SINGLE_APP / LICENSE_MULTI_APP in the 'docs' folder for license information on type of purchased license.
+ */
 
-interface CardSettings {
-  title: string;
-  iconClass: string;
-  type: string;
-}
+import {Component, OnDestroy} from '@angular/core';
+import { takeWhile } from 'rxjs/operators' ;
+import { SolarData, SolarEnergyStatistics } from '../../@core/interfaces/iot/solar';
+import { Device, DevicesData } from '../../@core/interfaces/iot/devices';
 
 @Component({
   selector: 'ngx-dashboard',
@@ -18,79 +18,31 @@ export class DashboardComponent implements OnDestroy {
 
   private alive = true;
 
-  solarValue: number;
-  lightCard: CardSettings = {
-    title: 'Light',
-    iconClass: 'nb-lightbulb',
-    type: 'primary',
-  };
-  rollerShadesCard: CardSettings = {
-    title: 'Roller Shades',
-    iconClass: 'nb-roller-shades',
-    type: 'success',
-  };
-  wirelessAudioCard: CardSettings = {
-    title: 'Wireless Audio',
-    iconClass: 'nb-audio',
-    type: 'info',
-  };
-  coffeeMakerCard: CardSettings = {
-    title: 'Coffee Maker',
-    iconClass: 'nb-coffee-maker',
-    type: 'warning',
-  };
+  solarValue: SolarEnergyStatistics;
 
-  statusCards: string;
+  devices: Device[];
 
-  commonStatusCardsSet: CardSettings[] = [
-    this.lightCard,
-    this.rollerShadesCard,
-    this.wirelessAudioCard,
-    this.coffeeMakerCard,
-  ];
-
-  statusCardsByThemes: {
-    default: CardSettings[];
-    cosmic: CardSettings[];
-    corporate: CardSettings[];
-    dark: CardSettings[];
-  } = {
-    default: this.commonStatusCardsSet,
-    cosmic: this.commonStatusCardsSet,
-    corporate: [
-      {
-        ...this.lightCard,
-        type: 'warning',
-      },
-      {
-        ...this.rollerShadesCard,
-        type: 'primary',
-      },
-      {
-        ...this.wirelessAudioCard,
-        type: 'danger',
-      },
-      {
-        ...this.coffeeMakerCard,
-        type: 'info',
-      },
-    ],
-    dark: this.commonStatusCardsSet,
-  };
-
-  constructor(private themeService: NbThemeService,
+  constructor(private devicesService: DevicesData,
               private solarService: SolarData) {
-    this.themeService.getJsTheme()
+    this.devicesService.list()
       .pipe(takeWhile(() => this.alive))
-      .subscribe(theme => {
-        this.statusCards = this.statusCardsByThemes[theme.name];
-    });
+      .subscribe(data => {
+        this.devices = data.filter(x => x.settings);
+      });
+
 
     this.solarService.getSolarData()
       .pipe(takeWhile(() => this.alive))
       .subscribe((data) => {
         this.solarValue = data;
       });
+  }
+
+  changeDeviceStatus(device: Device, isOn: boolean) {
+    device.isOn = isOn;
+    this.devicesService.edit(device)
+      .pipe(takeWhile(() => this.alive))
+      .subscribe();
   }
 
   ngOnDestroy() {

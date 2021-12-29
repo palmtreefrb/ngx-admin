@@ -1,3 +1,4 @@
+export * from './measure-converter.pipe';
 export * from './capitalize.pipe';
 export * from './plural.pipe';
 export * from './round.pipe';

@@ -1,7 +1,13 @@
+/*
+ * Copyright (c) Akveo 2019. All Rights Reserved.
+ * Licensed under the Single Application / Multi Application License.
+ * See LICENSE_SINGLE_APP / LICENSE_MULTI_APP in the 'docs' folder for license information on type of purchased license.
+ */
+
 import { Component, OnDestroy } from '@angular/core';
 import { takeWhile } from 'rxjs/operators';
 import { NbThemeService } from '@nebular/theme';
-import { OutlineData, VisitorsAnalyticsData } from '../../../@core/data/visitors-analytics';
+import { OutlineData, VisitorsAnalyticsData } from '../../../@core/interfaces/ecommerce/visitors-analytics';
 import { forkJoin } from 'rxjs';
 
 
@@ -25,11 +31,11 @@ export class ECommerceVisitorsAnalyticsComponent implements OnDestroy {
         this.setLegendItems(theme.variables.visitorsLegend);
       });
 
-    forkJoin(
+    forkJoin([
       this.visitorsAnalyticsChartService.getInnerLineChartData(),
       this.visitorsAnalyticsChartService.getOutlineLineChartData(),
       this.visitorsAnalyticsChartService.getPieChartData(),
-    )
+    ])
       .pipe(takeWhile(() => this.alive))
       .subscribe(([innerLine, outerLine, pieChartValue]: [number[], OutlineData[], number]) => {
         this.visitorsAnalyticsData = {

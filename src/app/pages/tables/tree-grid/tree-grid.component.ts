@@ -1,5 +1,12 @@
+/*
+ * Copyright (c) Akveo 2019. All Rights Reserved.
+ * Licensed under the Single Application / Multi Application License.
+ * See LICENSE_SINGLE_APP / LICENSE_MULTI_APP in the 'docs' folder for license information on type of purchased license.
+ */
+
 import { Component, Input } from '@angular/core';
 import { NbSortDirection, NbSortRequest, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
+import {MeasureConverterPipe} from '../../../@theme/pipes';
 
 interface TreeNode<T> {
   data: T;
@@ -9,7 +16,7 @@ interface TreeNode<T> {
 
 interface FSEntry {
   name: string;
-  size: string;
+  size: number;
   kind: string;
   items?: number;
 }
@@ -29,7 +36,8 @@ export class TreeGridComponent {
   sortColumn: string;
   sortDirection: NbSortDirection = NbSortDirection.NONE;
 
-  constructor(private dataSourceBuilder: NbTreeGridDataSourceBuilder<FSEntry>) {
+  constructor(private dataSourceBuilder: NbTreeGridDataSourceBuilder<FSEntry>,
+              public measureConverterPipe: MeasureConverterPipe) {
     this.dataSource = this.dataSourceBuilder.create(this.data);
   }
 
@@ -47,29 +55,36 @@ export class TreeGridComponent {
 
   private data: TreeNode<FSEntry>[] = [
     {
-      data: { name: 'Projects', size: '1.8 MB', items: 5, kind: 'dir' },
+      data: { name: 'Projects', size: 1800000, items: 4, kind: 'dir' },
       children: [
-        { data: { name: 'project-1.doc', kind: 'doc', size: '240 KB' } },
-        { data: { name: 'project-2.doc', kind: 'doc', size: '290 KB' } },
-        { data: { name: 'project-3', kind: 'txt', size: '466 KB' } },
-        { data: { name: 'project-4.docx', kind: 'docx', size: '900 KB' } },
+        { data: { name: 'project-1.doc', kind: 'doc', size: 240000 } },
+        { data: { name: 'project-2.doc', kind: 'doc', size: 290000 } },
+        { data: { name: 'project-3', kind: 'txt', size: 466000 } },
+        { data: { name: 'project-4.docx', kind: 'docx', size: 900000 } },
       ],
     },
     {
-      data: { name: 'Reports', kind: 'dir', size: '400 KB', items: 2 },
+      data: { name: 'Reports', kind: 'dir', size: 400000, items: 2 },
       children: [
-        { data: { name: 'Report 1', kind: 'doc', size: '100 KB' } },
-        { data: { name: 'Report 2', kind: 'doc', size: '300 KB' } },
+        { data: { name: 'Report 1', kind: 'doc', size: 100000 } },
+        { data: { name: 'Report 2', kind: 'doc', size: 300000 } },
       ],
     },
     {
-      data: { name: 'Other', kind: 'dir', size: '109 MB', items: 2 },
+      data: { name: 'Other', kind: 'dir', size: 109000000, items: 2 },
       children: [
-        { data: { name: 'backup.bkp', kind: 'bkp', size: '107 MB' } },
-        { data: { name: 'secret-note.txt', kind: 'txt', size: '2 MB' } },
+        { data: { name: 'backup.bkp', kind: 'bkp', size: 107000000 } },
+        { data: { name: 'secret-note.txt', kind: 'txt', size: 2000000 } },
       ],
     },
   ];
+
+  getCellValue(columnValue: string | number, columnName: string): string | number {
+    if (columnName === 'size') {
+      return this.measureConverterPipe.transform(columnValue);
+    }
+    return columnValue || '-';
+  }
 
   getShowOn(index: number) {
     const minWithForMultipleColumns = 400;

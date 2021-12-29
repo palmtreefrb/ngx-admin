@@ -1,4 +1,11 @@
+/*
+ * Copyright (c) Akveo 2019. All Rights Reserved.
+ * Licensed under the Single Application / Multi Application License.
+ * See LICENSE_SINGLE_APP / LICENSE_MULTI_APP in the 'docs' folder for license information on type of purchased license.
+ */
+
 import { Component, Input } from '@angular/core';
+import { Comparison } from '../../../../../@core/interfaces/ecommerce/traffic-list';
 
 @Component({
   selector: 'ngx-traffic-bar',
@@ -7,6 +14,6 @@ import { Component, Input } from '@angular/core';
 })
 export class TrafficBarComponent {
 
-  @Input() barData: { prevDate: string; prevValue: number; nextDate: string; nextValue: number };
+  @Input() barData: Comparison;
   @Input() successDelta: boolean;
 }

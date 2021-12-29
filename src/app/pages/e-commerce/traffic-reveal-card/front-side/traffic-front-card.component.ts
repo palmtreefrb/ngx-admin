@@ -1,8 +1,14 @@
+/*
+ * Copyright (c) Akveo 2019. All Rights Reserved.
+ * Licensed under the Single Application / Multi Application License.
+ * See LICENSE_SINGLE_APP / LICENSE_MULTI_APP in the 'docs' folder for license information on type of purchased license.
+ */
+
 import { Component, Input, OnDestroy } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
 import { takeWhile } from 'rxjs/operators';
 
-import { TrafficList } from '../../../../@core/data/traffic-list';
+import { TrafficListItem } from '../../../../@core/interfaces/ecommerce/traffic-list';
 
 @Component({
   selector: 'ngx-traffic-front-card',
@@ -13,7 +19,7 @@ export class TrafficFrontCardComponent implements OnDestroy {
 
   private alive = true;
 
-  @Input() frontCardData: TrafficList;
+  @Input() frontCardData: TrafficListItem;
 
   currentTheme: string;
 

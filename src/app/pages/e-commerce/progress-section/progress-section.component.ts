@@ -1,5 +1,11 @@
+/*
+ * Copyright (c) Akveo 2019. All Rights Reserved.
+ * Licensed under the Single Application / Multi Application License.
+ * See LICENSE_SINGLE_APP / LICENSE_MULTI_APP in the 'docs' folder for license information on type of purchased license.
+ */
+
 import { Component, OnDestroy } from '@angular/core';
-import { ProgressInfo, StatsProgressBarData } from '../../../@core/data/stats-progress-bar';
+import { ProgressInfo, StatsProgressBarData } from '../../../@core/interfaces/ecommerce/stats-progress-bar';
 import { takeWhile } from 'rxjs/operators';
 
 @Component({

@@ -1,6 +1,13 @@
+/*
+ * Copyright (c) Akveo 2019. All Rights Reserved.
+ * Licensed under the Single Application / Multi Application License.
+ * See LICENSE_SINGLE_APP / LICENSE_MULTI_APP in the 'docs' folder for license information on type of purchased license.
+ */
+
 import { delay } from 'rxjs/operators';
 import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
+import { SolarEnergyStatistics } from '../../../@core/interfaces/iot/solar';
 
 declare const echarts: any;
 
@@ -14,8 +21,8 @@ declare const echarts: any;
         <div echarts [options]="option" class="echart">
         </div>
         <div class="info">
-          <div class="h4 value">6.421 kWh</div>
-          <div class="details subtitle-2"><span>out of</span> 8.421 kWh</div>
+          <div class="h4 value">{{ value.solarValue}} {{ value.unitOfMeasure }}</div>
+          <div class="details subtitle-2"><span>out of</span> {{ value.totalValue }} {{ value.unitOfMeasure }}</div>
         </div>
       </nb-card-body>
     </nb-card>
@@ -23,16 +30,17 @@ declare const echarts: any;
 })
 export class SolarComponent implements AfterViewInit, OnDestroy {
 
-  private value = 0;
+  public value: SolarEnergyStatistics;
 
   @Input('chartValue')
-  set chartValue(value: number) {
+  set chartValue(value: SolarEnergyStatistics) {
+    value.percent = 10;
     this.value = value;
 
     if (this.option.series) {
-      this.option.series[0].data[0].value = value;
-      this.option.series[0].data[1].value = 100 - value;
-      this.option.series[1].data[0].value = value;
+      this.option.series[0].data[0].value = value.percent;
+      this.option.series[0].data[1].value = 100 - value.percent;
+      this.option.series[1].data[0].value = value.percent;
     }
   }
 
@@ -62,7 +70,7 @@ export class SolarComponent implements AfterViewInit, OnDestroy {
             radius: solarTheme.radius,
             data: [
               {
-                value: this.value,
+                value: this.value.percent,
                 name: ' ',
                 label: {
                   normal: {
@@ -100,7 +108,7 @@ export class SolarComponent implements AfterViewInit, OnDestroy {
                 hoverAnimation: false,
               },
               {
-                value: 100 - this.value,
+                value: 100 - this.value.percent,
                 name: ' ',
                 tooltip: {
                   show: false,
@@ -127,7 +135,7 @@ export class SolarComponent implements AfterViewInit, OnDestroy {
             radius: solarTheme.radius,
             data: [
               {
-                value: this.value,
+                value: this.value.percent,
                 name: ' ',
                 label: {
                   normal: {
@@ -157,7 +165,7 @@ export class SolarComponent implements AfterViewInit, OnDestroy {
                 hoverAnimation: false,
               },
               {
-                value: 28,
+                value: this.value.percent,
                 name: ' ',
                 tooltip: {
                   show: false,

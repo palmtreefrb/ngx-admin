@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) Akveo 2019. All Rights Reserved.
+ * Licensed under the Single Application / Multi Application License.
+ * See LICENSE_SINGLE_APP / LICENSE_MULTI_APP in the 'docs' folder for license information on type of purchased license.
+ */
+
 import { NgModule } from '@angular/core';
 import {
   NbActionsModule,
@@ -9,6 +15,7 @@ import {
   NbSelectModule,
   NbListModule,
   NbIconModule,
+  NbSpinnerModule,
 } from '@nebular/theme';
 import { NgxEchartsModule } from 'ngx-echarts';
 
@@ -30,6 +37,8 @@ import { PlayerComponent } from './rooms/player/player.component';
 import { TrafficComponent } from './traffic/traffic.component';
 import { TrafficChartComponent } from './traffic/traffic-chart.component';
 import { FormsModule } from '@angular/forms';
+import { StatusCardPlaceholderComponent } from './status-card/status-card-placeholder.component';
+import { AuthModule } from '../../@auth/auth.module';
 
 @NgModule({
   imports: [
@@ -45,7 +54,9 @@ import { FormsModule } from '@angular/forms';
     NbListModule,
     NbIconModule,
     NbButtonModule,
+    NbSpinnerModule,
     NgxEchartsModule,
+    AuthModule,
   ],
   declarations: [
     DashboardComponent,
@@ -64,6 +75,7 @@ import { FormsModule } from '@angular/forms';
     SolarComponent,
     TrafficComponent,
     TrafficChartComponent,
+    StatusCardPlaceholderComponent,
   ],
 })
 export class DashboardModule { }

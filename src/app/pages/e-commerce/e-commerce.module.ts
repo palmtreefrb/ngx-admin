@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) Akveo 2019. All Rights Reserved.
+ * Licensed under the Single Application / Multi Application License.
+ * See LICENSE_SINGLE_APP / LICENSE_MULTI_APP in the 'docs' folder for license information on type of purchased license.
+ */
+
 import { NgModule } from '@angular/core';
 import {
   NbButtonModule,
@@ -8,6 +14,7 @@ import {
   NbIconModule,
   NbSelectModule,
   NbListModule,
+  NbSpinnerModule,
 } from '@nebular/theme';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
@@ -70,6 +77,7 @@ import { EarningLiveUpdateChartComponent } from './earning-card/front-side/earni
     NbProgressBarModule,
     NgxEchartsModule,
     NgxChartsModule,
+    NbSpinnerModule,
     LeafletModule,
   ],
   declarations: [

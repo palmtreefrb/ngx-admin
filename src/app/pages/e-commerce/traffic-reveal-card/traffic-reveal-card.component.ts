@@ -1,6 +1,12 @@
+/*
+ * Copyright (c) Akveo 2019. All Rights Reserved.
+ * Licensed under the Single Application / Multi Application License.
+ * See LICENSE_SINGLE_APP / LICENSE_MULTI_APP in the 'docs' folder for license information on type of purchased license.
+ */
+
 import { Component, OnDestroy } from '@angular/core';
-import { TrafficList, TrafficListData } from '../../../@core/data/traffic-list';
-import { TrafficBarData, TrafficBar } from '../../../@core/data/traffic-bar';
+import { TrafficListItem, TrafficListData } from '../../../@core/interfaces/ecommerce/traffic-list';
+import { TrafficBar } from '../../../@core/interfaces/ecommerce/traffic-bar';
 import { takeWhile } from 'rxjs/operators';
 
 @Component({
@@ -13,14 +19,12 @@ export class TrafficRevealCardComponent implements OnDestroy {
   private alive = true;
 
   trafficBarData: TrafficBar;
-  trafficListData: TrafficList;
+  trafficListData: TrafficListItem[];
   revealed = false;
   period: string = 'week';
 
-  constructor(private trafficListService: TrafficListData,
-              private trafficBarService: TrafficBarData) {
+  constructor(private trafficListService: TrafficListData) {
     this.getTrafficFrontCardData(this.period);
-    this.getTrafficBackCardData(this.period);
   }
 
   toggleView() {
@@ -29,17 +33,7 @@ export class TrafficRevealCardComponent implements OnDestroy {
 
   setPeriodAngGetData(value: string): void {
     this.period = value;
-
     this.getTrafficFrontCardData(value);
-    this.getTrafficBackCardData(value);
-  }
-
-  getTrafficBackCardData(period: string) {
-    this.trafficBarService.getTrafficBarData(period)
-      .pipe(takeWhile(() => this.alive ))
-      .subscribe(trafficBarData => {
-        this.trafficBarData = trafficBarData;
-      });
   }
 
   getTrafficFrontCardData(period: string) {
@@ -47,6 +41,11 @@ export class TrafficRevealCardComponent implements OnDestroy {
       .pipe(takeWhile(() => this.alive))
       .subscribe(trafficListData => {
         this.trafficListData = trafficListData;
+        this.trafficBarData = {
+          data: trafficListData.map(item => item.value),
+          labels: trafficListData.map(item => item.date),
+          formatter: '{c0} GB',
+        };
       });
   }
 

@@ -1,5 +1,13 @@
+/*
+ * Copyright (c) Akveo 2019. All Rights Reserved.
+ * Licensed under the Single Application / Multi Application License.
+ * See LICENSE_SINGLE_APP / LICENSE_MULTI_APP in the 'docs' folder for license information on type of purchased license.
+ */
+
 import { Component, ElementRef, EventEmitter, NgZone, OnInit, Output, ViewChild } from '@angular/core';
+
 import { PositionModel } from '../entity/position.model';
+
 
 @Component({
   selector: 'ngx-search',
@@ -7,13 +15,13 @@ import { PositionModel } from '../entity/position.model';
 })
 export class SearchComponent implements OnInit {
 
-  @Output()
-  positionChanged: EventEmitter<PositionModel> = new EventEmitter<PositionModel>();
+  @Output() readonly positionChanged: EventEmitter<PositionModel> = new EventEmitter<PositionModel>();
 
   @ViewChild('search', { static: true })
-  searchElementRef: ElementRef;
+  public searchElementRef: ElementRef;
 
-  constructor(private ngZone: NgZone) {}
+  constructor(private ngZone: NgZone) {
+  }
 
   ngOnInit() {
     const autocomplete = new google.maps.places.Autocomplete(

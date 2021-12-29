@@ -1,7 +1,13 @@
+/*
+ * Copyright (c) Akveo 2019. All Rights Reserved.
+ * Licensed under the Single Application / Multi Application License.
+ * See LICENSE_SINGLE_APP / LICENSE_MULTI_APP in the 'docs' folder for license information on type of purchased license.
+ */
+
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NbMediaBreakpoint, NbMediaBreakpointsService, NbThemeService } from '@nebular/theme';
 import { takeWhile } from 'rxjs/operators';
-import { CountryOrderData } from '../../../@core/data/country-order';
+import { CountryOrderData } from '../../../@core/interfaces/ecommerce/country-order';
 
 @Component({
   selector: 'ngx-country-orders',
@@ -9,11 +15,12 @@ import { CountryOrderData } from '../../../@core/data/country-order';
   template: `
     <nb-card [size]="breakpoint.width >= breakpoints.md ? 'medium' : 'giant'">
       <nb-card-header>Country Orders Statistics</nb-card-header>
-      <nb-card-body>
+      <nb-card-body [nbSpinner]="!countriesCategories">
         <ngx-country-orders-map (select)="selectCountryById($event)"
                                 countryId="USA">
         </ngx-country-orders-map>
-        <ngx-country-orders-chart [countryName]="countryName"
+        <ngx-country-orders-chart *ngIf="countriesCategories"
+                                  [countryName]="countryName"
                                   [data]="countryData"
                                   [labels]="countriesCategories"
                                   maxValue="20">
@@ -38,7 +45,7 @@ export class CountryOrdersComponent implements OnInit, OnDestroy {
     this.breakpoints = this.breakpointService.getBreakpointsMap();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.themeService.onMediaQueryChange()
       .pipe(takeWhile(() => this.alive))
       .subscribe(([oldValue, newValue]) => {
@@ -51,10 +58,10 @@ export class CountryOrdersComponent implements OnInit, OnDestroy {
       });
   }
 
-  selectCountryById(countryName: string) {
-    this.countryName = countryName;
+  selectCountryById(event: any) {
+    this.countryName = event.name;
 
-    this.countryOrderService.getCountriesCategoriesData(countryName)
+    this.countryOrderService.getCountriesCategoriesData(event.code)
       .pipe(takeWhile(() => this.alive))
       .subscribe((countryData) => {
         this.countryData = countryData;

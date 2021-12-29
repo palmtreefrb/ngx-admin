@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) Akveo 2019. All Rights Reserved.
+ * Licensed under the Single Application / Multi Application License.
+ * See LICENSE_SINGLE_APP / LICENSE_MULTI_APP in the 'docs' folder for license information on type of purchased license.
+ */
+
 import {
   Component,
   HostListener,
@@ -35,20 +41,26 @@ export class TemperatureDraggerComponent implements AfterViewInit, OnChanges {
 
   value = 50;
   @Output() valueChange = new EventEmitter<Number>();
+  @Output() valueChangeCompleted = new EventEmitter<Number>();
   @Input('value') set setValue(value) {
     this.value = value;
   }
+
+  @Input() off = false;
+  @Output() powerChange = new EventEmitter<boolean>();
 
   @Input() min = 0; // min output value
   @Input() max = 100; // max output value
   @Input() step = 0.1;
 
-  @Output() power = new EventEmitter<boolean>();
-
   @HostListener('window:mouseup', ['$event'])
   onMouseUp(event) {
     this.recalculateValue(event);
     this.isMouseDown = false;
+    if (this.changeStarted) {
+      this.valueChangeCompleted.emit(this.value);
+    }
+    this.changeStarted = false;
   }
 
   @HostListener('window:mousemove', ['$event'])
@@ -61,7 +73,6 @@ export class TemperatureDraggerComponent implements AfterViewInit, OnChanges {
     this.invalidate();
   }
 
-  off = false;
   oldValue: number;
 
   svgControlId = uniqueId++;
@@ -85,6 +96,7 @@ export class TemperatureDraggerComponent implements AfterViewInit, OnChanges {
   };
 
   private isMouseDown = false;
+  private changeStarted = false;
   private init = false;
 
   constructor(
@@ -117,7 +129,7 @@ export class TemperatureDraggerComponent implements AfterViewInit, OnChanges {
 
   switchPower() {
     this.off = !this.off;
-    this.power.emit(!this.off);
+    this.powerChange.emit(!this.off);
 
     if (this.off) {
       this.oldValue = this.value;
@@ -359,6 +371,7 @@ export class TemperatureDraggerComponent implements AfterViewInit, OnChanges {
       const value = this.toValueNumber(relativeValue);
 
       if (this.value !== value && (allowJumping || Math.abs(relativeValue - previousRelativeValue) < this.maxLeap)) {
+        this.changeStarted = true;
         this.value = value;
         this.valueChange.emit(this.value);
         this.invalidatePinPosition();

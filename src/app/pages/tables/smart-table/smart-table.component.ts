@@ -1,7 +1,13 @@
+/*
+ * Copyright (c) Akveo 2019. All Rights Reserved.
+ * Licensed under the Single Application / Multi Application License.
+ * See LICENSE_SINGLE_APP / LICENSE_MULTI_APP in the 'docs' folder for license information on type of purchased license.
+ */
+
 import { Component } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 
-import { SmartTableData } from '../../../@core/data/smart-table';
+import { SmartTableData } from '../../../@core/interfaces/common/smart-table';
 
 @Component({
   selector: 'ngx-smart-table',
@@ -38,8 +44,8 @@ export class SmartTableComponent {
         title: 'Last Name',
         type: 'string',
       },
-      username: {
-        title: 'Username',
+      login: {
+        title: 'Login',
         type: 'string',
       },
       email: {

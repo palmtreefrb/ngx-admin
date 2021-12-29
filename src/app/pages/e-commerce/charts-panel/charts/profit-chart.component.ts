@@ -1,8 +1,14 @@
+/*
+ * Copyright (c) Akveo 2019. All Rights Reserved.
+ * Licensed under the Single Application / Multi Application License.
+ * See LICENSE_SINGLE_APP / LICENSE_MULTI_APP in the 'docs' folder for license information on type of purchased license.
+ */
+
 import { AfterViewInit, Component, Input, OnChanges, OnDestroy } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
 import { takeWhile } from 'rxjs/operators';
 
-import { ProfitChart } from '../../../../@core/data/profit-chart';
+import { ChartData } from '../../../../@core/interfaces/common/chart';
 import { LayoutService } from '../../../../@core/utils/layout.service';
 
 @Component({
@@ -15,7 +21,7 @@ import { LayoutService } from '../../../../@core/utils/layout.service';
 export class ProfitChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   @Input()
-  profitChartData: ProfitChart;
+  profitChartData: ChartData;
 
   private alive = true;
 
@@ -24,7 +30,7 @@ export class ProfitChartComponent implements AfterViewInit, OnDestroy, OnChanges
 
   constructor(private theme: NbThemeService,
               private layoutService: LayoutService) {
-    this.layoutService.onSafeChangeLayoutSize()
+    this.layoutService.onChangeLayoutSize()
       .pipe(
         takeWhile(() => this.alive),
       )
@@ -68,7 +74,7 @@ export class ProfitChartComponent implements AfterViewInit, OnDestroy, OnChanges
       xAxis: [
         {
           type: 'category',
-          data: this.profitChartData.chartLabel,
+          data: this.profitChartData.axisXLabels,
           axisTick: {
             alignWithLabel: true,
           },
@@ -104,7 +110,7 @@ export class ProfitChartComponent implements AfterViewInit, OnDestroy, OnChanges
       ],
       series: [
         {
-          name: 'Canceled',
+          name: this.profitChartData.legend[0], // 'Canceled',
           type: 'bar',
           barGap: 0,
           barWidth: '20%',
@@ -119,10 +125,10 @@ export class ProfitChartComponent implements AfterViewInit, OnDestroy, OnChanges
               }]),
             },
           },
-          data: this.profitChartData.data[0],
+          data: this.profitChartData.linesData[0],
         },
         {
-          name: 'Payment',
+          name: this.profitChartData.legend[1], // 'Payment',
           type: 'bar',
           barWidth: '20%',
           itemStyle: {
@@ -136,10 +142,10 @@ export class ProfitChartComponent implements AfterViewInit, OnDestroy, OnChanges
               }]),
             },
           },
-          data: this.profitChartData.data[1],
+          data: this.profitChartData.linesData[1],
         },
         {
-          name: 'All orders',
+          name: this.profitChartData.legend[2], // 'All orders',
           type: 'bar',
           barWidth: '20%',
           itemStyle: {
@@ -153,20 +159,20 @@ export class ProfitChartComponent implements AfterViewInit, OnDestroy, OnChanges
               }]),
             },
           },
-          data: this.profitChartData.data[2],
+          data: this.profitChartData.linesData[2],
         },
       ],
     };
   }
 
-  updateProfitChartOptions(profitChartData: ProfitChart) {
+  updateProfitChartOptions(profitChartData: ChartData) {
     const options = this.options;
-    const series = this.getNewSeries(options.series, profitChartData.data);
+    const series = this.getNewSeries(options.series, profitChartData.linesData);
 
     this.echartsIntance.setOption({
       series: series,
       xAxis: {
-        data: this.profitChartData.chartLabel,
+        data: this.profitChartData.axisXLabels,
       },
     });
   }

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) Akveo 2019. All Rights Reserved.
+ * Licensed under the Single Application / Multi Application License.
+ * See LICENSE_SINGLE_APP / LICENSE_MULTI_APP in the 'docs' folder for license information on type of purchased license.
+ */
+
 import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 
 import * as L from 'leaflet';
@@ -124,7 +130,7 @@ export class CountryOrdersMapComponent implements OnDestroy {
       this.resetHighlight(this.selectedCountry);
       this.highlightFeature(featureLayer);
       this.selectedCountry = featureLayer;
-      this.select.emit(featureLayer.feature.properties.name);
+      this.select.emit({ code: featureLayer.feature.id, name: featureLayer.feature.properties.name});
     }
   }
 

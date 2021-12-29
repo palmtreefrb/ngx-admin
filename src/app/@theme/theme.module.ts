@@ -15,6 +15,7 @@ import {
 } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NbSecurityModule } from '@nebular/security';
+import { AuthModule } from '../@auth/auth.module';
 
 import {
   FooterComponent,
@@ -23,6 +24,7 @@ import {
   TinyMCEComponent,
 } from './components';
 import {
+  MeasureConverterPipe,
   CapitalizePipe,
   PluralPipe,
   RoundPipe,
@@ -34,6 +36,8 @@ import {
   ThreeColumnsLayoutComponent,
   TwoColumnsLayoutComponent,
 } from './layouts';
+import { InitUserService } from './services/init-user.service';
+
 import { DEFAULT_THEME } from './styles/theme.default';
 import { COSMIC_THEME } from './styles/theme.cosmic';
 import { CORPORATE_THEME } from './styles/theme.corporate';
@@ -63,6 +67,7 @@ const COMPONENTS = [
   TwoColumnsLayoutComponent,
 ];
 const PIPES = [
+  MeasureConverterPipe,
   CapitalizePipe,
   PluralPipe,
   RoundPipe,
@@ -71,7 +76,7 @@ const PIPES = [
 ];
 
 @NgModule({
-  imports: [CommonModule, ...NB_MODULES],
+  imports: [CommonModule, AuthModule, ...NB_MODULES],
   exports: [CommonModule, ...PIPES, ...COMPONENTS],
   declarations: [...COMPONENTS, ...PIPES],
 })
@@ -86,6 +91,7 @@ export class ThemeModule {
           },
           [ DEFAULT_THEME, COSMIC_THEME, CORPORATE_THEME, DARK_THEME ],
         ).providers,
+        InitUserService,
       ],
     };
   }

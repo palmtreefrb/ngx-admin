@@ -1,10 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NbMediaBreakpointsService, NbMenuService, NbSidebarService, NbThemeService } from '@nebular/theme';
 
-import { UserData } from '../../../@core/data/users';
 import { LayoutService } from '../../../@core/utils';
 import { map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { UserStore } from '../../../@core/stores/user.store';
+import { SettingsData } from '../../../@core/interfaces/common/settings';
+import { User } from '../../../@core/interfaces/common/users';
 
 @Component({
   selector: 'ngx-header',
@@ -15,7 +17,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   private destroy$: Subject<void> = new Subject<void>();
   userPictureOnly: boolean = false;
-  user: any;
+  user: User;
 
   themes = [
     {
@@ -36,24 +38,39 @@ export class HeaderComponent implements OnInit, OnDestroy {
     },
   ];
 
-  currentTheme = 'default';
+  currentTheme = 'dark';
 
-  userMenu = [ { title: 'Profile' }, { title: 'Log out' } ];
+  userMenu = this.getMenuItems();
 
   constructor(private sidebarService: NbSidebarService,
               private menuService: NbMenuService,
               private themeService: NbThemeService,
-              private userService: UserData,
+              private userStore: UserStore,
+              private settingsService: SettingsData,
               private layoutService: LayoutService,
               private breakpointService: NbMediaBreakpointsService) {
   }
 
-  ngOnInit() {
-    this.currentTheme = this.themeService.currentTheme;
+  getMenuItems() {
+    const userLink = this.user ?  '/pages/users/current/' : '';
+    return [
+      { title: 'Profile', link: userLink, queryParams: { profile: true } },
+      { title: 'Log out', link: '/auth/logout' },
+    ];
+  }
 
-    this.userService.getUsers()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((users: any) => this.user = users.nick);
+  ngOnInit() {
+    let _user = this.userStore.getUser();
+    this.currentTheme = _user.settings.themeName;
+
+    this.userStore.onUserStateChange()
+      .pipe(
+        takeUntil(this.destroy$),
+      )
+      .subscribe((user: User) => {
+        this.user = user;
+        this.userMenu = this.getMenuItems();
+      });
 
     const { xl } = this.breakpointService.getBreakpointsMap();
     this.themeService.onMediaQueryChange()
@@ -77,6 +94,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   changeTheme(themeName: string) {
+    this.userStore.setSetting(themeName);
+    let settings = this.userStore.getUser().settings;
+    this.settingsService.updateCurrent(this.userStore.getUser().settings)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe();
+
     this.themeService.changeTheme(themeName);
   }
 

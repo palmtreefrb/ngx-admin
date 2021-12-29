@@ -1,9 +1,14 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { map, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { NbComponentSize, NbMediaBreakpointsService, NbThemeService } from '@nebular/theme';
+/*
+ * Copyright (c) Akveo 2019. All Rights Reserved.
+ * Licensed under the Single Application / Multi Application License.
+ * See LICENSE_SINGLE_APP / LICENSE_MULTI_APP in the 'docs' folder for license information on type of purchased license.
+ */
 
-import { Camera, SecurityCamerasData } from '../../../@core/data/security-cameras';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Camera, SecurityCamerasData } from '../../../@core/interfaces/iot/security-cameras';
+import { Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
+import { NbComponentSize, NbThemeService, NbMediaBreakpointsService } from '@nebular/theme';
 
 @Component({
   selector: 'ngx-security-cameras',

@@ -1,32 +1,37 @@
+/*
+ * Copyright (c) Akveo 2019. All Rights Reserved.
+ * Licensed under the Single Application / Multi Application License.
+ * See LICENSE_SINGLE_APP / LICENSE_MULTI_APP in the 'docs' folder for license information on type of purchased license.
+ */
+
 import { delay, takeWhile } from 'rxjs/operators';
-import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, Input, OnChanges, OnDestroy } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
 import { LayoutService } from '../../../@core/utils';
 
 @Component({
   selector: 'ngx-traffic-chart',
+  styleUrls: ['./traffic.component.scss'],
   template: `
     <div echarts
-         [options]="option"
+         [options]="options"
          class="echart"
          (chartInit)="onChartInit($event)">
     </div>
   `,
 })
-export class TrafficChartComponent implements AfterViewInit, OnDestroy {
+export class TrafficChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   private alive = true;
 
   @Input() points: number[];
 
-  type = 'month';
-  types = ['week', 'month', 'year'];
-  option: any = {};
+  options: any = {};
   echartsIntance: any;
 
   constructor(private theme: NbThemeService,
               private layoutService: LayoutService) {
-    this.layoutService.onSafeChangeLayoutSize()
+    this.layoutService.onChangeLayoutSize()
       .pipe(
         takeWhile(() => this.alive),
       )
@@ -42,7 +47,7 @@ export class TrafficChartComponent implements AfterViewInit, OnDestroy {
       .subscribe(config => {
         const trafficTheme: any = config.variables.traffic;
 
-        this.option = Object.assign({}, {
+        this.options = Object.assign({}, {
           grid: {
             left: 0,
             top: 0,
@@ -162,10 +167,33 @@ export class TrafficChartComponent implements AfterViewInit, OnDestroy {
     this.echartsIntance = echarts;
   }
 
+  ngOnChanges(): void {
+    this.echartsIntance && this.updateChartOptions(this.points);
+  }
+
+  updateChartOptions(points: number[]) {
+    const options = this.options;
+    const series = this.getNewSeries(options.series, [points, points.map(p => p - 15)]);
+
+    this.echartsIntance.setOption({
+      series: series,
+      xAxis: {
+        data: points,
+      },
+    });
+  }
+
+  getNewSeries(series, data: number[][]) {
+    return series.map((line, index) => {
+      return {
+        ...line,
+        data: data[index],
+      };
+    });
+  }
+
   resizeChart() {
-    if (this.echartsIntance) {
-      this.echartsIntance.resize();
-    }
+    this.echartsIntance && this.echartsIntance.resize();
   }
 
   ngOnDestroy() {
